@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
-import org.mockito.IdiomaticMockito
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsObject, Json}
@@ -31,7 +32,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
+class AuditServiceSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   trait Setup {
 
@@ -63,7 +64,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
     "the user is identifying a general partnership with all information" when {
       "the user has successfully passed business verification" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -72,7 +73,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = Registered(testBusinessPartnerId)
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "success", "success")
 
@@ -81,12 +82,12 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testDefaultGeneralPartnershipJourneyConfig,
           ))
 
-          mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel)
         }
       }
       "business verification could not find a record for the user" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -95,7 +96,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = Some(BusinessVerificationNotEnoughInformationToChallenge),
               registrationStatus = RegistrationNotCalled
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "Not Enough Information to challenge", "not called")
 
@@ -103,12 +104,12 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testJourneyId,
             testDefaultGeneralPartnershipJourneyConfig
           ))
-          mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel)
         }
       }
       "the user has failed business verification" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -117,7 +118,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = Some(BusinessVerificationFail),
               registrationStatus = RegistrationNotCalled
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "fail", "not called")
 
@@ -125,12 +126,12 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testJourneyId,
             testDefaultGeneralPartnershipJourneyConfig
           ))
-          mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel)
         }
       }
       "the user has passed business verification but the registration call failed" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -139,7 +140,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = testRegistrationFailedWithSingleFailure
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "success", "fail")
 
@@ -147,12 +148,12 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testJourneyId,
             testDefaultGeneralPartnershipJourneyConfig
           ))
-          mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel)
         }
       }
       "there is no business verification status" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -161,7 +162,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = None,
               registrationStatus = testRegistrationFailedWithSingleFailure
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "not requested", "fail")
 
@@ -169,13 +170,13 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testJourneyId,
             testDefaultGeneralPartnershipJourneyConfig
           ))
-          mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel)
         }
       }
     }
     "the user is identifying a general partnership with no SAUTR and the calling service has not provided a service name" should {
       "audit the correct information" in new Setup {
-        mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+        when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
           PartnershipFullJourneyData(
             optPostcode = None,
             optSautr = None,
@@ -184,8 +185,9 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
             registrationStatus = RegistrationNotCalled
           )
-        ))
-        mockAppConfig.defaultServiceName returns testServiceName
+        )))
+
+        when(mockAppConfig.defaultServiceName).thenReturn(testServiceName)
 
         val expectedAuditModel: JsObject = Json.obj(
           "isMatch" -> "unmatchable",
@@ -199,13 +201,13 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
           testJourneyId,
           testDefaultGeneralPartnershipJourneyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
         ))
-        mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+        verify(mockAuditConnector).sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel)
       }
     }
     "the user is identifying a scottish partnership with all information" when {
       "the user has successfully passed business verification" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -214,7 +216,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = Registered(testBusinessPartnerId)
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "success", "success")
 
@@ -223,12 +225,12 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = ScottishPartnership)
           ))
 
-          mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel)
         }
       }
       "the user has failed business verification" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -237,7 +239,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = Some(BusinessVerificationFail),
               registrationStatus = RegistrationNotCalled
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "fail", "not called")
 
@@ -245,12 +247,12 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testJourneyId,
             defaultScottishPartnershipJourneyConfig
           ))
-          mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel)
         }
       }
       "the user has passed business verification but the registration call failed" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -259,7 +261,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = testRegistrationFailedWithSingleFailure
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "success", "fail")
 
@@ -267,12 +269,12 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testJourneyId,
             defaultScottishPartnershipJourneyConfig,
           ))
-          mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel)
         }
       }
       "there is no business verification status" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             PartnershipFullJourneyData(
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
@@ -281,7 +283,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               businessVerification = None,
               registrationStatus = testRegistrationFailedWithSingleFailure
             )
-          ))
+          )))
 
           val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "not requested", "fail")
 
@@ -289,13 +291,13 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testJourneyId,
             defaultScottishPartnershipJourneyConfig
           ))
-          mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel)
         }
       }
     }
     "the user is identifying a scottish partnership with no SAUTR and the calling service has not provided a service name" should {
       "audit the correct information" in new Setup {
-        mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+        when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
           PartnershipFullJourneyData(
             optPostcode = None,
             optSautr = None,
@@ -304,8 +306,9 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
             registrationStatus = RegistrationNotCalled
           )
-        ))
-        mockAppConfig.defaultServiceName returns testServiceName
+        )))
+
+        when(mockAppConfig.defaultServiceName).thenReturn(testServiceName)
 
         val expectedAuditModel: JsObject = Json.obj(
           "isMatch" -> "unmatchable",
@@ -319,7 +322,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
           testJourneyId,
           defaultScottishPartnershipJourneyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
         ))
-        mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
+        verify(mockAuditConnector).sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel)
       }
     }
 
@@ -331,30 +334,32 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
       "identifiersMatch is false" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             limitedPartnershipFullJourneyData
-          ))
+          )))
 
-          await(TestAuditService.auditPartnershipInformation(
-            journeyId = testJourneyId,
-            journeyConfig = journeyConfig
-          ))
-          mockAuditConnector.sendExplicitAudit(auditType = "LimitedPartnershipRegistration", detail = expectedAuditModel) was called
+          await(
+            TestAuditService.auditPartnershipInformation(
+              journeyId = testJourneyId,
+              journeyConfig = journeyConfig
+            )
+          )
+          verify(mockAuditConnector).sendExplicitAudit(auditType = "LimitedPartnershipRegistration", detail = expectedAuditModel)
         }
       }
       "identifiersMatch is false and service name has not provided" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             limitedPartnershipFullJourneyData
-          ))
+          )))
 
-          mockAppConfig.defaultServiceName returns testServiceName
+          when(mockAppConfig.defaultServiceName).thenReturn(testServiceName)
 
           await(TestAuditService.auditPartnershipInformation(
             journeyId = testJourneyId,
             journeyConfig = journeyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
           ))
-          mockAuditConnector.sendExplicitAudit("LimitedPartnershipRegistration", expectedAuditModel) was called
+          verify(mockAuditConnector).sendExplicitAudit("LimitedPartnershipRegistration", expectedAuditModel)
         }
       }
     }
@@ -367,39 +372,39 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
       "identifiersMatch is false" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             limitedPartnershipFullJourneyData
-          ))
+          )))
 
           await(TestAuditService.auditPartnershipInformation(
             journeyId = testJourneyId,
             journeyConfig = journeyConfig
           ))
 
-          mockAuditConnector.sendExplicitAudit(
+          verify(mockAuditConnector).sendExplicitAudit(
             auditType = "LimitedLiabilityPartnershipRegistration",
             detail = expectedAuditModel
-          ) was called
+          )
         }
       }
 
       "identifiersMatch is false and service name has not provided" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             limitedPartnershipFullJourneyData
-          ))
+          )))
 
-          mockAppConfig.defaultServiceName returns testServiceName
+          when(mockAppConfig.defaultServiceName).thenReturn(testServiceName)
 
           await(TestAuditService.auditPartnershipInformation(
             journeyId = testJourneyId,
             journeyConfig = journeyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
           ))
 
-          mockAuditConnector.sendExplicitAudit(
+          verify(mockAuditConnector).sendExplicitAudit(
             auditType = "LimitedLiabilityPartnershipRegistration",
             detail = expectedAuditModel
-          ) was called
+          )
         }
       }
     }
@@ -412,39 +417,39 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
       "identifiersMatch is false" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             limitedPartnershipFullJourneyData
-          ))
+          )))
 
           await(TestAuditService.auditPartnershipInformation(
             journeyId = testJourneyId,
             journeyConfig = journeyConfig
           ))
 
-          mockAuditConnector.sendExplicitAudit(
+          verify(mockAuditConnector).sendExplicitAudit(
             auditType = "ScottishLTDPartnershipRegistration",
             detail = expectedAuditModel
-          ) was called
+          )
         }
       }
 
       "identifiersMatch is false and service name has not provided" should {
         "audit the correct information" in new Setup {
-          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+          when(mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId)).thenReturn(Future.successful(Some(
             limitedPartnershipFullJourneyData
-          ))
+          )))
 
-          mockAppConfig.defaultServiceName returns testServiceName
+          when(mockAppConfig.defaultServiceName).thenReturn(testServiceName)
 
           await(TestAuditService.auditPartnershipInformation(
             journeyId = testJourneyId,
             journeyConfig = journeyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
           ))
 
-          mockAuditConnector.sendExplicitAudit(
+          verify(mockAuditConnector).sendExplicitAudit(
             auditType = "ScottishLTDPartnershipRegistration",
             detail = expectedAuditModel
-          ) was called
+          )
         }
       }
     }

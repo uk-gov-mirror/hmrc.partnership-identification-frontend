@@ -69,7 +69,7 @@ class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponen
     implicit request =>
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-          confirmPartnershipNameForm.bindFromRequest.fold(
+          confirmPartnershipNameForm.bindFromRequest().fold(
             formWithErrors =>
               journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
                 journeyConfig =>

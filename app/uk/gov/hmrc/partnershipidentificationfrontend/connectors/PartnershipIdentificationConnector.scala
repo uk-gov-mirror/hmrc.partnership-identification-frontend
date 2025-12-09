@@ -17,6 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig

@@ -16,6 +16,11 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.models
 
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
 
 case class JourneyConfig(continueUrl: String, businessVerificationCheck: Boolean, pageConfig: PageConfig, partnershipType: PartnershipType, regime: String)
+
+object JourneyConfig {
+  implicit val format: OFormat[JourneyConfig] = Json.format[JourneyConfig]
+}

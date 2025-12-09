@@ -22,7 +22,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIden
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, PartnershipFullJourneyData, PartnershipInformation}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{RegistrationStatus, ValidationResponse}
-import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService._
+ 
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,37 +33,37 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
   def storeSautr(journeyId: String,
                  sautr: String
                 )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
-    connector.storeData[String](journeyId, SautrKey, sautr)
+    connector.storeData[String](journeyId, PartnershipIdentificationService.SautrKey, sautr)
 
   def storePostCode(journeyId: String,
                     postCode: String
                    )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
-    connector.storeData[String](journeyId, PostCodeKey, postCode)
+    connector.storeData[String](journeyId, PartnershipIdentificationService.PostCodeKey, postCode)
 
   def storeBusinessVerificationStatus(journeyId: String,
                                       businessVerification: BusinessVerificationStatus
                                      )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
-    connector.storeData[BusinessVerificationStatus](journeyId, VerificationStatusKey, businessVerification)
+    connector.storeData[BusinessVerificationStatus](journeyId, PartnershipIdentificationService.VerificationStatusKey, businessVerification)
 
   def storeIdentifiersMatch(journeyId: String,
                             identifiersMatch: ValidationResponse
                            )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
-    connector.storeData[ValidationResponse](journeyId, IdentifiersMatchKey, identifiersMatch)
+    connector.storeData[ValidationResponse](journeyId, PartnershipIdentificationService.IdentifiersMatchKey, identifiersMatch)
 
   def storeRegistrationStatus(journeyId: String,
                               registrationStatus: RegistrationStatus
                              )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
-    connector.storeData[RegistrationStatus](journeyId, RegistrationKey, registrationStatus)(RegistrationStatus.format, hc)
+    connector.storeData[RegistrationStatus](journeyId, PartnershipIdentificationService.RegistrationKey, registrationStatus)(RegistrationStatus.format, hc)
 
   def retrieveSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
-    connector.retrievePartnershipInformation[String](journeyId, SautrKey)
+    connector.retrievePartnershipInformation[String](journeyId, PartnershipIdentificationService.SautrKey)
 
   def retrievePostCode(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
-    connector.retrievePartnershipInformation[String](journeyId, PostCodeKey)
+    connector.retrievePartnershipInformation[String](journeyId, PartnershipIdentificationService.PostCodeKey)
 
   def removeSaInformation(journeyId: String)(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] = for {
-    _ <- connector.removePartnershipInformation(journeyId, SautrKey)
-    _ <- connector.removePartnershipInformation(journeyId, PostCodeKey)
+    _ <- connector.removePartnershipInformation(journeyId, PartnershipIdentificationService.SautrKey)
+    _ <- connector.removePartnershipInformation(journeyId, PartnershipIdentificationService.PostCodeKey)
   } yield SuccessfullyRemoved
 
   def retrievePartnershipInformation(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[PartnershipInformation]] =
@@ -74,10 +74,10 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
 
   def retrieveBusinessVerificationStatus(journeyId: String
                                         )(implicit hc: HeaderCarrier): Future[Option[BusinessVerificationStatus]] =
-    connector.retrievePartnershipInformation[BusinessVerificationStatus](journeyId, VerificationStatusKey)
+    connector.retrievePartnershipInformation[BusinessVerificationStatus](journeyId, PartnershipIdentificationService.VerificationStatusKey)
 
   def retrieveCompanyProfile(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[CompanyProfile]] =
-    connector.retrievePartnershipInformation[CompanyProfile](journeyId, CompanyProfileKey)
+    connector.retrievePartnershipInformation[CompanyProfile](journeyId, PartnershipIdentificationService.CompanyProfileKey)
 
 }
 

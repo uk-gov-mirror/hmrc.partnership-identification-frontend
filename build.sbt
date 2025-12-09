@@ -3,10 +3,9 @@ import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 val appName = "partnership-identification-frontend"
 
-val silencerVersion = "1.7.19"
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.3.6"
 
 Test / Keys.fork := true
 Test / javaOptions += "-Dlogger.resource=logback-test.xml"
@@ -22,9 +21,8 @@ lazy val microservice = Project(appName, file("."))
     ),
     Assets / pipelineStages := Seq(gzip)
   )
-  .settings(scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s")
-  .settings(scalacOptions += "-Wconf:cat=unused-imports&src=routes/.*:s")
-  .settings(SilencerSettings(silencerVersion))
+  .settings(scalacOptions += "-Wconf:msg=unused import&src=html/.*:s")
+  .settings(scalacOptions += "-Wconf:msg=unused import&src=routes/.*:s")
   .settings(ScoverageSettings.settings *)
   .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
   .disablePlugins(JUnitXmlReportPlugin)

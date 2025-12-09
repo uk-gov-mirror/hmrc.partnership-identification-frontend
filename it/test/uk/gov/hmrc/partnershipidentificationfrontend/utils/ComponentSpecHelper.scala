@@ -26,6 +26,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Writes}
 import play.api.libs.ws.{DefaultWSCookie, WSClient, WSCookie, WSRequest, WSResponse}
+import play.api.libs.ws.DefaultBodyWritables.{writeableOf_String, writeableOf_urlEncodedForm}
 import play.api.test.Helpers._
 import org.mongodb.scala.result.InsertOneResult
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig

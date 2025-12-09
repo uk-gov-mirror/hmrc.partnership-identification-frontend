@@ -18,6 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.http.Status.{CREATED, FORBIDDEN, NOT_FOUND}
 import play.api.libs.json.{JsObject, Json}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, InternalServerException, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
