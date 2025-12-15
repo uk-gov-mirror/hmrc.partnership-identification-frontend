@@ -57,7 +57,7 @@ object PartnershipFullJourneyData {
       (JsPath \ IdentifiersMatchKey).write[ValidationResponse] and
       (JsPath \ BusinessVerificationKey).writeNullable[BusinessVerificationStatus] and
       (JsPath \ RegistrationStatusKey).write[RegistrationStatus](RegistrationStatus.format)
-    ) (o => Tuple.fromProductTyped(o))
+    ) { p => (p.optPostcode, p.optSautr, p.companyProfile, p.identifiersMatch, p.businessVerification, p.registrationStatus) }
 
   implicit val format: OFormat[PartnershipFullJourneyData] = OFormat(reads, writes)
 
