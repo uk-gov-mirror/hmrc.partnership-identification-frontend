@@ -541,6 +541,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
+        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
@@ -552,6 +553,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = NOT_FOUND)
+        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
@@ -563,6 +565,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
+        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = NOT_FOUND)
 
         val result = get(s"$baseUrl/$testJourneyId/register")
@@ -574,6 +577,8 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = BAD_REQUEST)
+        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
@@ -584,6 +589,8 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = INTERNAL_SERVER_ERROR)
+        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
