@@ -25,15 +25,9 @@ class FeatureSwitchRegistrySpec extends AnyWordSpec with Matchers {
 
   "FeatureSwitchRegistry" should {
 
-    "contain the feature switches for the Partnership Known Facts, Business Verification and Companies House stubs" in {
+    "contain the feature switches for the Business Verification and Companies House stubs" in {
 
-      TestFeatureSwitchRegistry.switches mustBe Seq(StubPartnershipKnownFacts, BusinessVerificationStub, CompaniesHouseStub)
-
-    }
-
-    "be able to access the Partnership Known Facts stub feature switch" in {
-
-      TestFeatureSwitchRegistry("feature-switch.partnership-known-facts-stub") mustBe StubPartnershipKnownFacts
+      TestFeatureSwitchRegistry.switches mustBe Seq(BusinessVerificationStub, CompaniesHouseStub)
 
     }
 

@@ -6,6 +6,7 @@ val appName = "partnership-identification-frontend"
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.6"
+ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s"
 
 Test / Keys.fork := true
 Test / javaOptions += "-Dlogger.resource=logback-test.xml"
@@ -23,6 +24,8 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(scalacOptions += "-Wconf:msg=unused import&src=html/.*:s")
   .settings(scalacOptions += "-Wconf:msg=unused import&src=routes/.*:s")
+  .settings(scalacOptions += "-Wconf:src=html/.*:s")
+  .settings(scalacOptions += "-Wconf:src=routes/.*:s")
   .settings(ScoverageSettings.settings *)
   .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
   .disablePlugins(JUnitXmlReportPlugin)

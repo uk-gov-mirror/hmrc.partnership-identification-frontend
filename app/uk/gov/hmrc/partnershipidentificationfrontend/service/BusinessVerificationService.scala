@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.{CreateBusinessVerificationJourneyConnector, RetrieveBusinessVerificationStatusConnector}
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 
@@ -36,7 +36,6 @@ class BusinessVerificationService @Inject()(createBusinessVerificationJourneyCon
         val bvStatus = failureReason match {
           case NotEnoughEvidence => BusinessVerificationNotEnoughInformationToChallenge
           case UserLockedOut => BusinessVerificationFail
-          case _ => throw new InternalServerException(s"createBusinessVerificationJourney service failed with invalid BV status")
         }
         partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, bvStatus).map {
           _ => None

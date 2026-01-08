@@ -540,21 +540,31 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
       "business verification is in an invalid state" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
-        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
+        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.obj("verificationStatus" -> "Invalid"))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
         result.status mustBe INTERNAL_SERVER_ERROR
       }
 
+      "business verification returns fail" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(status = OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
+        stubAudit()
+
+        val result = get(s"$baseUrl/$testJourneyId/register")
+
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+      }
+
       "sautr is missing" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = NOT_FOUND)
-        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
@@ -564,8 +574,6 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
       "business verification status is missing" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
-        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = NOT_FOUND)
 
         val result = get(s"$baseUrl/$testJourneyId/register")
@@ -577,8 +585,6 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = BAD_REQUEST)
-        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
@@ -589,8 +595,6 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = INTERNAL_SERVER_ERROR)
-        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 

@@ -25,11 +25,9 @@ import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.models.F
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class FeatureSwitchApiController @Inject()(featureSwitchService: FeatureSwitchService, controllerComponents: ControllerComponents)
+class FeatureSwitchApiController @Inject()(featureSwitchService: FeatureSwitchService, override val controllerComponents: ControllerComponents)
   extends InjectedController
   with FeatureSwitching {
-
-  setControllerComponents(controllerComponents)
 
   def getFeatureSwitches(): Action[AnyContent] = Action {
     Ok(Json.toJson(featureSwitchService.getFeatureSwitches()))

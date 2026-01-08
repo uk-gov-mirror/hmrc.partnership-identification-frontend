@@ -22,9 +22,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedControlle
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class CompaniesHouseStubController @Inject()(controllerComponents: ControllerComponents) extends InjectedController {
-
-  setControllerComponents(controllerComponents)
+class CompaniesHouseStubController @Inject()(override val controllerComponents: ControllerComponents) extends InjectedController {
 
   private val companyNameKey = "company_name"
   private val companyNumberKey = "company_number"

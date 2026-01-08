@@ -24,9 +24,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class BusinessVerificationStubController @Inject()(controllerComponents: ControllerComponents) extends InjectedController {
-
-  setControllerComponents(controllerComponents)
+class BusinessVerificationStubController @Inject()(override val controllerComponents: ControllerComponents) extends InjectedController {
 
   private val businessVerificationJourneyId = UUID.randomUUID.toString
 
