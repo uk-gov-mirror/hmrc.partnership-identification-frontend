@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import org.scalatest.concurrent.Eventually.eventually
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
@@ -35,7 +36,6 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    stubAudit()
   }
 
   def auditJson(businessType: String, registerStatus: String, verificationStatus: String): JsObject =
@@ -73,7 +73,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("General Partnership", "success", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("General Partnership", "success", "success"))
+          }
         }
 
         "a General Partnership registration failed and registration status is successfully stored" in {
@@ -451,7 +453,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Limited Liability Partnership", "success", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Liability Partnership", "success", "not requested"))
+          }
         }
 
         "a Limited Liability Partnership registration failed and registration status is successfully stored" in {
