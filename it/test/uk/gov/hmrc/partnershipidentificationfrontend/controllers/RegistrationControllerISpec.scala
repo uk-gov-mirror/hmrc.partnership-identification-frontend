@@ -99,7 +99,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("General Partnership", "fail", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("General Partnership", "fail", "success"))
+          }
         }
 
         "a Scottish Partnership registration is successful and registration status is successfully stored" in {
@@ -123,7 +125,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Scottish Partnership", "success", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish Partnership", "success", "success"))
+          }
         }
 
         "a Scottish Partnership registration failed and registration status is successfully stored" in {
@@ -147,7 +151,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Scottish Partnership", "fail", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish Partnership", "fail", "success"))
+          }
         }
 
         "a Limited Partnership registration is successful and registration status is successfully stored" in {
@@ -171,7 +177,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Limited Partnership", "success", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Partnership", "success", "success"))
+          }
         }
 
         "a Limited Partnership registration failed and registration status is successfully stored" in {
@@ -195,7 +203,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Limited Partnership", "fail", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Partnership", "fail", "success"))
+          }
         }
 
         "a Scottish LTD Partnership registration is successful and registration status is successfully stored" in {
@@ -219,7 +229,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Scottish LTD Partnership", "success", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish LTD Partnership", "success", "success"))
+          }
         }
 
         "a Scottish LTD Partnership registration failed and registration status is successfully stored" in {
@@ -243,7 +255,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Scottish LTD Partnership", "fail", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish LTD Partnership", "fail", "success"))
+          }
         }
 
         "a Limited Liability Partnership registration is successful and registration status is successfully stored" in {
@@ -267,7 +281,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Limited Liability Partnership", "success", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Liability Partnership", "success", "success"))
+          }
         }
 
         "a Limited Liability Partnership registration failed and registration status is successfully stored" in {
@@ -291,7 +307,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Limited Liability Partnership", "fail", "success"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Liability Partnership", "fail", "success"))
+          }
         }
       }
       "Business Verification is disabled" when {
@@ -315,7 +333,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("General Partnership", "success", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("General Partnership", "success", "not requested"))
+          }
         }
 
         "a General Partnership registration failed and registration status is successfully stored" in {
@@ -338,7 +358,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("General Partnership", "fail", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("General Partnership", "fail", "not requested"))
+          }
         }
 
         "a Scottish Partnership registration is successful and registration status is successfully stored" in {
@@ -361,7 +383,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Scottish Partnership", "success", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish Partnership", "success", "not requested"))
+          }
         }
 
         "a Scottish Partnership registration failed and registration status is successfully stored" in {
@@ -384,7 +408,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Scottish Partnership", "fail", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish Partnership", "fail", "not requested"))
+          }
         }
 
         "a Limited Partnership registration is successful and registration status is successfully stored" in {
@@ -407,7 +433,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Limited Partnership", "success", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Partnership", "success", "not requested"))
+          }
         }
 
         "a Limited Partnership registration failed and registration status is successfully stored" in {
@@ -430,7 +458,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Limited Partnership", "fail", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Partnership", "fail", "not requested"))
+          }
         }
 
         "a Limited Liability Partnership registration is successful and registration status is successfully stored" in {
@@ -478,7 +508,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Limited Liability Partnership", "fail", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Limited Liability Partnership", "fail", "not requested"))
+          }
         }
 
         "a Scottish LTD Partnership registration is successful and registration status is successfully stored" in {
@@ -501,7 +533,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
-          verifyAuditDetail(auditJson("Scottish LTD Partnership", "success", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish LTD Partnership", "success", "not requested"))
+          }
         }
 
         "a Scottish LTD Partnership registration failed and registration status is successfully stored" in {
@@ -524,7 +558,9 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
           verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, testRegistrationFailedWith1Failure)
-          verifyAuditDetail(auditJson("Scottish LTD Partnership", "fail", "not requested"))
+          eventually {
+            verifyAuditDetail(auditJson("Scottish LTD Partnership", "fail", "not requested"))
+          }
         }
       }
     }
