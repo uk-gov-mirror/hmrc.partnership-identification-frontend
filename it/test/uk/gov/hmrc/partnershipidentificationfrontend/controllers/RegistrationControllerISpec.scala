@@ -590,6 +590,8 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
       "business verification returns fail" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
+        stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(status = OK)
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonBVFailed)
