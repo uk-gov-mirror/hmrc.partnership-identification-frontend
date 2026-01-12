@@ -588,17 +588,21 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
       }
 
       "business verification returns fail" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(status = OK)
-        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonBVFailed)
         stubAudit()
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
         result.status mustBe SEE_OTHER
         result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        verifyStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)
+        eventually {
+          verifyAuditDetail(auditJson("General Partnership", "not called", "fail"))
+        }
       }
 
       "sautr is missing" in {
