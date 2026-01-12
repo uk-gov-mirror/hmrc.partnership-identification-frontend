@@ -17,12 +17,12 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers
 
 import play.api.libs.json.{JsObject, JsString, Json}
-import play.api.mvc.{Action, AnyContent, InjectedController}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController}
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class CompaniesHouseStubController extends InjectedController {
+class CompaniesHouseStubController @Inject()(override val controllerComponents: ControllerComponents) extends InjectedController {
 
   private val companyNameKey = "company_name"
   private val companyNumberKey = "company_number"

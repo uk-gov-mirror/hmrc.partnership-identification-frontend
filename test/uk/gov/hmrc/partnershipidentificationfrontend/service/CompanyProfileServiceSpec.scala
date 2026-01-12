@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
-import org.mockito.IdiomaticMockito
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{verify, when}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers._
@@ -25,12 +27,10 @@ import uk.gov.hmrc.partnershipidentificationfrontend.connectors.{CompanyProfileC
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.models.CompanyProfile
-import uk.gov.hmrc.partnershipidentificationfrontend.service.CompanyProfileService.CompanyProfileWrites
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CompanyProfileServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
+class CompanyProfileServiceSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   trait Setup {
     val mockCompanyProfileConnector: CompanyProfileConnector = mock[CompanyProfileConnector]
@@ -55,65 +55,65 @@ class CompanyProfileServiceSpec extends AnyWordSpec with Matchers with Idiomatic
   "retrieveAndStoreCompanyProfile" when {
     "the company number is 8 characters long" should {
       "store and return the company profile" in new Setup {
-        mockCompanyProfileConnector.getCompanyProfile(testCompanyNumber) returns Future.successful(Some(testCompanyProfile))
-        mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) returns Future.successful(SuccessfullyStored)
+        when(mockCompanyProfileConnector.getCompanyProfile(testCompanyNumber)).thenReturn(Future.successful(Some(testCompanyProfile)))
+        when(mockPartnershipIdentificationConnector.storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())).thenReturn(Future.successful(SuccessfullyStored))
 
         await(TestService.retrieveAndStoreCompanyProfile(testJourneyId, testCompanyNumber)) mustBe Some(testCompanyProfile)
 
-        mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) was called
+        verify(mockPartnershipIdentificationConnector).storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())
       }
     }
 
     "the company number is shorter than 8 characters" when {
       "the CRN has no prefix" should {
         "pad the CRN with 0s, store and return the company profile" in new Setup {
-          mockCompanyProfileConnector.getCompanyProfile(testPaddedCompanyNumber) returns Future.successful(Some(testCompanyProfile))
-          mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) returns Future.successful(SuccessfullyStored)
+          when(mockCompanyProfileConnector.getCompanyProfile(testPaddedCompanyNumber)).thenReturn(Future.successful(Some(testCompanyProfile)))
+          when(mockPartnershipIdentificationConnector.storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())).thenReturn(Future.successful(SuccessfullyStored))
 
           await(TestService.retrieveAndStoreCompanyProfile(testJourneyId, testShortCompanyNumber)) mustBe Some(testCompanyProfile)
 
-          mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) was called
+          verify(mockPartnershipIdentificationConnector).storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())
         }
       }
 
       "the CRN has a prefix" should {
         "pad the CRN with 0s after the prefix, store and return the company profile" in new Setup {
-          mockCompanyProfileConnector.getCompanyProfile(testPrefixedPaddedCompanyNumber) returns Future.successful(Some(testCompanyProfile))
-          mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) returns Future.successful(SuccessfullyStored)
+          when(mockCompanyProfileConnector.getCompanyProfile(testPrefixedPaddedCompanyNumber)).thenReturn(Future.successful(Some(testCompanyProfile)))
+          when(mockPartnershipIdentificationConnector.storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())).thenReturn(Future.successful(SuccessfullyStored))
 
           await(TestService.retrieveAndStoreCompanyProfile(testJourneyId, testPrefixedCompanyNumber)) mustBe Some(testCompanyProfile)
 
-          mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) was called
+          verify(mockPartnershipIdentificationConnector).storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())
         }
       }
     }
 
     "the company number has a suffix" should {
       "return the result of the connector" in new Setup {
-        mockCompanyProfileConnector.getCompanyProfile(testSuffixedCompanyNumber) returns Future.successful(Some(testCompanyProfile))
-        mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) returns Future.successful(SuccessfullyStored)
+        when(mockCompanyProfileConnector.getCompanyProfile(testSuffixedCompanyNumber)).thenReturn(Future.successful(Some(testCompanyProfile)))
+        when(mockPartnershipIdentificationConnector.storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())).thenReturn(Future.successful(SuccessfullyStored))
 
         await(TestService.retrieveAndStoreCompanyProfile(testJourneyId, testSuffixedCompanyNumber)) mustBe Some(testCompanyProfile)
 
-        mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) was called
+        verify(mockPartnershipIdentificationConnector).storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())
       }
     }
 
     "the company number has a prefix and a suffix" should {
       "return the result of the connector" in new Setup {
-        mockCompanyProfileConnector.getCompanyProfile(testPrefixSuffixCompanyNumber) returns Future.successful(Some(testCompanyProfile))
-        mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) returns Future.successful(SuccessfullyStored)
+        when(mockCompanyProfileConnector.getCompanyProfile(testPrefixSuffixCompanyNumber)).thenReturn(Future.successful(Some(testCompanyProfile)))
+        when(mockPartnershipIdentificationConnector.storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())).thenReturn(Future.successful(SuccessfullyStored))
 
         await(TestService.retrieveAndStoreCompanyProfile(testJourneyId, testPrefixSuffixCompanyNumber)) mustBe Some(testCompanyProfile)
 
-        mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) was called
+        verify(mockPartnershipIdentificationConnector).storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())
       }
     }
   }
 
   "return None" when {
     "there is no company profile for the given company number" in new Setup {
-      mockCompanyProfileConnector.getCompanyProfile(testCompanyNumber) returns Future.successful(None)
+      when(mockCompanyProfileConnector.getCompanyProfile(testCompanyNumber)).thenReturn(Future.successful(None))
 
       await(TestService.retrieveAndStoreCompanyProfile(testJourneyId, testCompanyNumber)) mustBe None
     }
@@ -121,16 +121,16 @@ class CompanyProfileServiceSpec extends AnyWordSpec with Matchers with Idiomatic
 
   "throw an exception" when {
     "the call to the database times out" in new Setup {
-      mockCompanyProfileConnector.getCompanyProfile(testCompanyNumber) returns Future.successful(Some(testCompanyProfile))
-      mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) returns Future.failed(
+      when(mockCompanyProfileConnector.getCompanyProfile(testCompanyNumber)).thenReturn(Future.successful(Some(testCompanyProfile)))
+      when(mockPartnershipIdentificationConnector.storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())).thenReturn(Future.failed(
         new GatewayTimeoutException("GET of '/testUrl' timed out with message 'testError'")
-      )
+      ))
 
       intercept[GatewayTimeoutException](
         await(TestService.retrieveAndStoreCompanyProfile(testJourneyId, testCompanyNumber))
       )
 
-      mockPartnershipIdentificationConnector.storeData[CompanyProfile](testJourneyId, dataKey, testCompanyProfile) was called
+      verify(mockPartnershipIdentificationConnector).storeData(eqTo(testJourneyId), eqTo(dataKey), eqTo(testCompanyProfile))(any(), any())
     }
 
     "the company number is invalid" in new Setup {

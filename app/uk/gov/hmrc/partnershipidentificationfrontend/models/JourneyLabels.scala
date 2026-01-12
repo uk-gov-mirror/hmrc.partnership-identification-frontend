@@ -39,7 +39,7 @@ object JourneyLabels {
   implicit val writes: OWrites[JourneyLabels] = (
     (JsPath \ welshLabelsKey \ optServiceNameKey).writeNullable[String] and
       (JsPath \ englishLabelsKey \ optServiceNameKey).writeNullable[String]
-    ) (unlift(JourneyLabels.unapply))
+    ) { j => (j.optWelshServiceName, j.optEnglishServiceName) }
 
   val format: OFormat[JourneyLabels] = OFormat(reads, writes)
 

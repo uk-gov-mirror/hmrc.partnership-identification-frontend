@@ -18,6 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors
 
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import play.api.mvc.Call
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, InternalServerException, StringContextOps}
 import uk.gov.hmrc.http.HttpReads.Implicits._

@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OWrites}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.{CompanyProfileConnector, PartnershipIdentificationConnector}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.CompanyProfile
-import uk.gov.hmrc.partnershipidentificationfrontend.service.CompanyProfileService._
+ 
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +36,7 @@ class CompanyProfileService @Inject()(storageConnector: PartnershipIdentificatio
                                     )(implicit hc: HeaderCarrier): Future[Option[CompanyProfile]] =
     companyProfileConnector.getCompanyProfile(padCrn(companyNumber)).flatMap {
       case Some(companyProfile) =>
-        storageConnector.storeData(journeyId, "companyProfile", companyProfile).map {
+        storageConnector.storeData(journeyId, "companyProfile", companyProfile)(Json.writes[CompanyProfile], hc).map {
           _ => Some(companyProfile)
         }
       case None =>

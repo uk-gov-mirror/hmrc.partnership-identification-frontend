@@ -23,7 +23,7 @@ sealed trait RegistrationStatus
 
 case class Registered(registeredBusinessPartnerId: String) extends RegistrationStatus
 
-  case class RegistrationFailed(registrationFailures: Array[Failure]) extends RegistrationStatus
+case class RegistrationFailed(registrationFailures: Array[Failure]) extends RegistrationStatus
 
 case object RegistrationNotCalled extends RegistrationStatus
 
@@ -52,8 +52,6 @@ object RegistrationStatus {
         )
         case RegistrationNotCalled =>
           Json.obj(registrationStatusKey -> RegistrationNotCalledKey)
-        case _ =>
-          throw new InternalServerException("Invalid registration status")
       }
 
     override def reads(json: JsValue): JsResult[RegistrationStatus] =

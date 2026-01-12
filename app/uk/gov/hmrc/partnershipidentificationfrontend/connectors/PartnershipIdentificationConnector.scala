@@ -17,6 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
@@ -27,6 +28,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipFullJour
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 @Singleton
 class PartnershipIdentificationConnector @Inject()(http: HttpClientV2,
@@ -36,7 +38,7 @@ class PartnershipIdentificationConnector @Inject()(http: HttpClientV2,
   def retrievePartnershipInformation[DataType](journeyId: String,
                                                dataKey: String
                                               )(implicit dataTypeReads: Reads[DataType],
-                                                manifest: Manifest[DataType],
+                                                classTag: ClassTag[DataType],
                                                 hc: HeaderCarrier): Future[Option[DataType]] =
     http.get(url = url"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")(hc).execute[Option[DataType]]
 

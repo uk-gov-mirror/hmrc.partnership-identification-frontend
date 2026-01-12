@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.models
 
+import play.api.libs.json._
+
 object PartnershipType {
   sealed trait PartnershipType
 
@@ -28,4 +30,28 @@ object PartnershipType {
   case object LimitedPartnership extends PartnershipType
 
   case object LimitedLiabilityPartnership extends PartnershipType
+
+  val GeneralPartnershipKey = "generalPartnership"
+  val ScottishPartnershipKey = "scottishPartnership"
+  val ScottishLimitedPartnershipKey = "scottishLimitedPartnership"
+  val LimitedPartnershipKey = "limitedPartnership"
+  val LimitedLiabilityPartnershipKey = "limitedLiabilityPartnership"
+
+  implicit val format: Format[PartnershipType] = new Format[PartnershipType] {
+    override def reads(json: JsValue): JsResult[PartnershipType] = json.validate[String].collect(JsonValidationError("Invalid partnership type")) {
+      case GeneralPartnershipKey => GeneralPartnership
+      case ScottishPartnershipKey => ScottishPartnership
+      case ScottishLimitedPartnershipKey => ScottishLimitedPartnership
+      case LimitedPartnershipKey => LimitedPartnership
+      case LimitedLiabilityPartnershipKey => LimitedLiabilityPartnership
+    }
+
+    override def writes(partnershipType: PartnershipType): JsValue = partnershipType match {
+      case GeneralPartnership => JsString(GeneralPartnershipKey)
+      case ScottishPartnership => JsString(ScottishPartnershipKey)
+      case ScottishLimitedPartnership => JsString(ScottishLimitedPartnershipKey)
+      case LimitedPartnership => JsString(LimitedPartnershipKey)
+      case LimitedLiabilityPartnership => JsString(LimitedLiabilityPartnershipKey)
+    }
+  }
 }

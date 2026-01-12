@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.utils
 
-import org.mockito.IdiomaticMockito
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -26,7 +27,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, Page
 
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants.{testDefaultGeneralPartnershipJourneyConfig, testDefaultPageConfig}
 
-class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with BeforeAndAfterEach {
+class UrlHelperSpec extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach {
 
   val mockAppConfig: AppConfig = mock[AppConfig]
 
@@ -43,14 +44,14 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with
 
     "allow journey configuration where all Url values are relative Urls" in {
 
-      mockAppConfig.allowedHosts returns Set()
+      when(mockAppConfig.allowedHosts).thenReturn(Set())
 
       target.containsRelativeOrAcceptedUrlsOnly(testDefaultGeneralPartnershipJourneyConfig) mustBe true
     }
 
     "allow journey configurations where all Url values have hosts in the allowed hosts list" in {
 
-      mockAppConfig.allowedHosts returns allowedHosts
+      when(mockAppConfig.allowedHosts).thenReturn(allowedHosts)
 
       val testPageConfig: PageConfig = testDefaultPageConfig.copy(
         signOutUrl = "http://localhost:9000/signOut",
@@ -67,7 +68,7 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with
 
     "reject journey configuration when the continue url is absolute and the host is not in the allowed hosts list" in {
 
-      mockAppConfig.allowedHosts returns allowedHosts
+      when(mockAppConfig.allowedHosts).thenReturn(allowedHosts)
 
       val testJourneyConfig: JourneyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(
         continueUrl = "http://somehost:9000/continue"
@@ -78,7 +79,7 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with
 
     "reject journey configuration when the sign out url is absolute and the host is not in the allowed hosts list" in {
 
-      mockAppConfig.allowedHosts returns allowedHosts
+      when(mockAppConfig.allowedHosts).thenReturn(allowedHosts)
 
       val testPageConfig: PageConfig = testDefaultPageConfig.copy(
         signOutUrl = "https://somehost:9000/signOut"
@@ -93,7 +94,7 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with
 
     "reject journey configuration when the accessibility url is absolute and the host is not in the allowed hosts list" in {
 
-      mockAppConfig.allowedHosts returns allowedHosts
+      when(mockAppConfig.allowedHosts).thenReturn(allowedHosts)
 
       val testPageConfig: PageConfig = testDefaultPageConfig.copy(
         accessibilityUrl = "https://somehost:9000/accessibility"
@@ -108,7 +109,7 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with
 
     "reject journey configuration when the continue url is '/'" in {
 
-      mockAppConfig.allowedHosts returns allowedHosts
+      when(mockAppConfig.allowedHosts).thenReturn(allowedHosts)
 
       val testJourneyConfig: JourneyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(
         continueUrl = "/"
@@ -119,7 +120,7 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with
 
     "reject journey configuration when all urls are absolute and the allowed hosts list is empty" in {
 
-        mockAppConfig.allowedHosts returns Set()
+        when(mockAppConfig.allowedHosts).thenReturn(Set())
 
         val testPageConfig: PageConfig = testDefaultPageConfig.copy(
           signOutUrl = "http://localhost:9000/signOut",

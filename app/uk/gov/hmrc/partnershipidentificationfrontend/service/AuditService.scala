@@ -54,7 +54,6 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     case LimitedPartnership => "LimitedPartnershipRegistration"
     case LimitedLiabilityPartnership => "LimitedLiabilityPartnershipRegistration"
     case ScottishLimitedPartnership => "ScottishLTDPartnershipRegistration"
-    case _ => ""
   }
 
   private def companyNumberJson(optCompanyProfile: Option[CompanyProfile]): JsObject = optCompanyProfile match {
@@ -85,7 +84,6 @@ class AuditService @Inject()(auditConnector: AuditConnector,
       case LimitedPartnership => "Limited Partnership"
       case LimitedLiabilityPartnership => "Limited Liability Partnership"
       case ScottishLimitedPartnership => "Scottish LTD Partnership"
-      case _ => ""
     }
     Json.obj(
       "businessType" -> businessType

@@ -108,7 +108,6 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
   private def displayOrNotSkipSautrLink(partnershipType: PartnershipType): Boolean = partnershipType match {
     case GeneralPartnership | ScottishPartnership => true
     case ScottishLimitedPartnership | LimitedPartnership | LimitedLiabilityPartnership => false
-    case invalidType => throw new InternalServerException(s"Invalid Partnership Type: $invalidType on SAUTR page")
   }
 
 }

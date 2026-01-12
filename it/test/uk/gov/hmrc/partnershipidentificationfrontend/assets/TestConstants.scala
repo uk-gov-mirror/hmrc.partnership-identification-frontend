@@ -253,6 +253,20 @@ object TestConstants {
       Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch")
     ))
 
+  val testPartnershipFullJourneyDataJsonBVFailed: JsObject = {
+    Json.obj(
+      "sautr" -> testSautr,
+      "postcode" -> testPostcode,
+      "identifiersMatch" -> "IdentifiersMatched",
+      "businessVerification" -> Json.obj(
+        "verificationStatus" -> "FAIL"
+      ),
+      "registration" -> Json.obj(
+        "registrationStatus" -> "REGISTRATION_NOT_CALLED"
+      )
+    )
+  }
+
   val signInRedirectUrl: (String, String) => String = (journeyId, currentPageUrl) =>
     "/bas-gateway/sign-in" +
       s"?continue_url=%2Fidentify-your-partnership%2F$journeyId%2F$currentPageUrl" +

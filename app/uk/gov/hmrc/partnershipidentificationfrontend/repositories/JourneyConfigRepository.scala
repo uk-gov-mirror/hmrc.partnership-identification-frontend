@@ -23,7 +23,6 @@ import org.mongodb.scala.result.{DeleteResult, InsertOneResult}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
-import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
@@ -39,31 +38,31 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
   collectionName = "partnership-identification-frontend",
   mongoComponent = mongoComponent,
   domainFormat = implicitly[Format[JsObject]],
-  indexes = scala.Seq(timeToLiveIndex(appConfig.timeToLiveSeconds)),
-  extraCodecs = scala.Seq(Codecs.playFormatCodec(journeyConfigMongoFormat))
+  indexes = scala.Seq(JourneyConfigRepository.timeToLiveIndex(appConfig.timeToLiveSeconds)),
+  extraCodecs = scala.Seq(Codecs.playFormatCodec(JourneyConfigRepository.journeyConfigMongoFormat))
 ){
 
   def insertJourneyConfig(journeyId: String, authInternalId: String, journeyConfig: JourneyConfig): Future[InsertOneResult] = {
 
     val document: JsObject = Json.obj(
-      JourneyIdKey -> journeyId,
-      AuthInternalIdKey -> authInternalId,
-      CreationTimestampKey -> Json.obj("$date" -> Instant.now.toEpochMilli)
+      JourneyConfigRepository.JourneyIdKey -> journeyId,
+      JourneyConfigRepository.AuthInternalIdKey -> authInternalId,
+      JourneyConfigRepository.CreationTimestampKey -> Json.obj("$date" -> Instant.now.toEpochMilli)
     ) ++ Json.toJsObject(journeyConfig)
 
     collection.insertOne(document).toFuture()
   }
 
-  def findJourneyConfig(journeyId: String, authInternalId: String): Future[Option[JourneyConfig]] = {
-
-    collection.find[JourneyConfig](
-      Filters.and(
-        Filters.equal(JourneyIdKey, journeyId),
-        Filters.equal(AuthInternalIdKey, authInternalId)
+  def findJourneyConfig(journeyId: String, authInternalId: String): Future[Option[JourneyConfig]] =
+    collection
+      .find[JsObject](
+        Filters.and(
+          Filters.equal(JourneyConfigRepository.JourneyIdKey, journeyId),
+          Filters.equal(JourneyConfigRepository.AuthInternalIdKey, authInternalId)
+        )
       )
-    ).headOption()
-
-  }
+      .headOption()
+      .map(_.flatMap(js => js.asOpt[JourneyConfig](JourneyConfig.format)))
 
   def count: Future[Long] = collection.countDocuments().toFuture()
 
@@ -71,8 +70,8 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
 
     collection.deleteOne(
       Filters.and(
-        Filters.equal(JourneyIdKey, journeyId),
-        Filters.equal(AuthInternalIdKey, authInternalId)
+        Filters.equal(JourneyConfigRepository.JourneyIdKey, journeyId),
+        Filters.equal(JourneyConfigRepository.AuthInternalIdKey, authInternalId)
       )
     ).toFuture()
 

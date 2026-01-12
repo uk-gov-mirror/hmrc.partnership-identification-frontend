@@ -18,6 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.con
 
 import play.api.http.Status._
 import play.api.libs.json.{Json, JsError, JsSuccess, Reads}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
